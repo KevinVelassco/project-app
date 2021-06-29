@@ -1,17 +1,17 @@
 import React from "react";
-import axios from "../../helpers/axios";
 
 import { useFetch } from '../../hooks/useFetch';
 import { DataTable } from '../../components/table/DataTable';
 import { useForm } from "../../hooks/useForm";
 import { userValidation } from "../../validations/users/userValidation";
 import { initialForm } from "./initialForm";
+import { useCrud } from "../../hooks/useCrud";
 
 const url = "https://node-sequelize-api-pro.herokuapp.com/users";
 
 export const Users = () => {
 
-    const { data: users, loading } = useFetch(url);
+    const { data, loading } = useFetch(url);
 
     const columns = [
         { column: 'id', label: 'Id' },
@@ -21,31 +21,21 @@ export const Users = () => {
         { column: 'phone', label: 'Phone' }
     ];
 
-    const { form,
+    const {
+        form,
         errors,
         handleChange,
-        validateForm } = useForm(initialForm, userValidation);
+        validateForm
+    } = useForm(initialForm, userValidation);
 
-    const handleSubmit = (e) => {
-        e.preventDefault()
-
-        const isValid = validateForm();
-
-        if (isValid) {
-            axios.post(url, {
-                body: form
-            }).then(res => res.err
-                ? alert(res.errors)
-                : alert('Registro creado correctamente.'));
-        }
-    }
+    const { loadingCrud, handleCreate } = useCrud({ url, form, validateForm });
 
     return (
         <div className="container-fluid p-5">
             <div className="row">
                 <div className="col-12 pb-3">
                     <h3>Registro de usuarios</h3>
-                    <form onSubmit={handleSubmit}>
+                    <form onSubmit={handleCreate}>
                         <input
                             name="name"
                             className="form-control mb-2"
@@ -86,11 +76,17 @@ export const Users = () => {
                         />
                         {errors.phone && <p>{errors.phone}</p>}
 
-                        <button type="submit" className="btn btn-primary">Guardar</button>
+                        <button className="btn btn-primary" type="submit" disabled={loadingCrud}>
+                            {
+                                loadingCrud
+                                    ? <> <span className="spinner-border spinner-border-sm" /> loading</>
+                                    : <>Guardar</>
+                            }
+                        </button>
                     </form>
                 </div>
                 <div className="col-12">
-                    <DataTable columns={columns} records={users} loading={loading} />
+                    <DataTable columns={columns} records={data} loading={loading} />
                 </div>
             </div>
         </div>
