@@ -5,8 +5,8 @@ const axios = () => {
             'Content-Type': 'application/json'
         }
 
-        options.hedears = options.hedears
-            ? { ...defaultHeaders, ...options.hedears }
+        options.headers = options.headers
+            ? { ...defaultHeaders, ...options.headers }
             : defaultHeaders;
 
         options.method = options.method || 'GET';

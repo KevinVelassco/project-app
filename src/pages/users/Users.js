@@ -1,8 +1,11 @@
 import React from "react";
+import axios from "../../helpers/axios";
+
 import { useFetch } from '../../hooks/useFetch';
 import { DataTable } from '../../components/table/DataTable';
 import { useForm } from "../../hooks/useForm";
-import axios from "../../helpers/axios";
+import { userValidation } from "../../validations/users/userValidation";
+import { initialForm } from "./initialForm";
 
 const url = "https://node-sequelize-api-pro.herokuapp.com/users";
 
@@ -18,20 +21,23 @@ export const Users = () => {
         { column: 'phone', label: 'Phone' }
     ];
 
-    const { form, handleChange } = useForm({
-        name: '',
-        email: '',
-        identification: '',
-        phone: ''
-    });
+    const { form,
+        errors,
+        handleChange,
+        validateForm } = useForm(initialForm, userValidation);
 
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        axios.post(url, form)
-            .then(console.log);
+        const isValid = validateForm();
 
-        console.log(form);
+        if (isValid) {
+            axios.post(url, {
+                body: form
+            }).then(res => res.err
+                ? alert(res.errors)
+                : alert('Registro creado correctamente.'));
+        }
     }
 
     return (
@@ -48,33 +54,37 @@ export const Users = () => {
                             value={form.name}
                             onChange={handleChange}
                         />
+                        {errors.name && <p>{errors.name}</p>}
 
                         <input
                             name="email"
                             className="form-control mb-2"
                             autoComplete="off"
                             placeholder="Email"
-                            value={form.name}
+                            value={form.email}
                             onChange={handleChange}
                         />
+                        {errors.email && <p>{errors.email}</p>}
 
                         <input
                             name="identification"
                             className="form-control mb-2"
                             placeholder="Identification"
                             autoComplete="off"
-                            value={form.name}
+                            value={form.identification}
                             onChange={handleChange}
                         />
+                        {errors.identification && <p>{errors.identification}</p>}
 
                         <input
                             name="phone"
                             className="form-control mb-2"
                             placeholder="Phone"
                             autoComplete="off"
-                            value={form.name}
+                            value={form.phone}
                             onChange={handleChange}
                         />
+                        {errors.phone && <p>{errors.phone}</p>}
 
                         <button type="submit" className="btn btn-primary">Guardar</button>
                     </form>
