@@ -1,19 +1,22 @@
 import { useState } from "react";
 import axios from "../helpers/axios";
 
-export const useCrud = ({ url, form, validateForm }) => {
+const url = "https://node-sequelize-api-pro.herokuapp.com";
+
+export const useCrud = ({ endpoint, form, validateForm }) => {
 
     const [loadingCrud, setLoadingCrud] = useState(false);
+    const [isNewRecord, setIsNewRecord] = useState(false);
 
     const handleCreate = (e) => {
-        e.preventDefault()
+        e.preventDefault();
 
         const isValid = validateForm();
 
         if (isValid) {
             setLoadingCrud(true);
 
-            axios.post(url, {
+            axios.post(`${url}${endpoint}`, {
                 body: form
             }).then(res => {
                 res.err
@@ -25,8 +28,20 @@ export const useCrud = ({ url, form, validateForm }) => {
         }
     }
 
+    const handleDelete = (id) => {
+        axios.del(`${url}${endpoint}/${id}`)
+            .then(res => {
+                res.err
+                    ? alert(res.errors)
+                    : alert('Registro eliminado correctamente.');
+            });
+    }
+
     return {
         loadingCrud,
-        handleCreate
+        isNewRecord,
+        setIsNewRecord,
+        handleCreate,
+        handleDelete
     }
 }
