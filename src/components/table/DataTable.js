@@ -1,12 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import PropTypes from 'prop-types';
 
-export const DataTable = ({ columns, records, loading, options = {} }) => {
-
-    /*const isEmptyOptions = useMemo(() => {
-        if (Object.keys(options) === 0) return true;
-        return Object.values(options).find(value => value) ? false : true;
-    }, [options]);*/
+export const DataTable = React.memo(({ columns, records, loading, options = {} }) => {
 
     const isEmptyOptions = useMemo(() =>
         Object.keys(options).length === 0
@@ -103,7 +98,7 @@ export const DataTable = ({ columns, records, loading, options = {} }) => {
             }
         </>
     )
-}
+});
 
 DataTable.propTypes = {
     columns: PropTypes.array.isRequired,

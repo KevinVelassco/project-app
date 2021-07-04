@@ -32,6 +32,7 @@ export const useForm = (initialState = {}, schema) => {
 
     return {
         form,
+        setForm,
         errors,
         handleChange,
         validateForm
